@@ -40,7 +40,7 @@ class CQT :
         return np.array(cq)
 
 def hamming(length) :
-    return 0.46 - 0.54 * np.cos(2 * pi * np.arange(length) / length)
+    return 0.54 - 0.46 * np.cos(2 * pi * np.arange(length) / length)
 
 # np.arange()
 def test() :
