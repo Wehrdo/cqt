@@ -1,10 +1,11 @@
 import numpy as np
 from scipy.sparse import hstack, vstack, coo_matrix
 from math import *
+import timeit
 
 class CQT :
     def __init__(self, fmin, fmax, bins, fs, wnd) :
-        print 'Initializing...'
+        print('Initializing...')
         self.eps = 1e-5
         self.fmin = fmin
         self.fmax = fmax
@@ -25,7 +26,7 @@ class CQT :
         # print 'shape:', hstack(self.ker).tocsc().shape
         self.ker.reverse()
         self.ker = vstack(self.ker).tocsc().transpose().conj() / self.fftlen
-        print 'Initialized OK.'
+        print('Initialized OK.')
 
     def fast(self, x) :
         # print self.ker.shape, np.fft.fft(x, self.fftlen).shape
@@ -49,12 +50,19 @@ def test() :
     drd = CQT(40, 22050, 12, 44100, hamming)
     
     y, z = drd.fast(x), drd.slow(x)
-    print 'Benchmark the `EFFICIENT` method:'
-    timeit('y = drd.fast(x)', repeat = 10)
+    print('Benchmark the `EFFICIENT` method:')
+    def test1():
+        global y
+        y = drd.fast(x)
+    timeit.timeit(test1, number = 10)
 
-    print 'Benchmark the `BRUTE-FORCE` method:'
-    timeit('z = drd.slow(x)', repeat = 10)
+    def test2():
+        global z
+        z = drd.slow(x)
+    print('Benchmark the `BRUTE-FORCE` method:')
+    timeit.timeit(test2, number = 10)
 
-    print 'The difference: ', max(abs(z - y))
+    print('The difference: ', max(abs(z - y)))
 
-test()
+if __name__ == '__main__':
+    test()
